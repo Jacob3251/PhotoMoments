@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "11311732397",
+    "project_id": "photo-moments-5c74f",
+    "storage_bucket": "photo-moments-5c74f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:11311732397:android:4112ee8f72c4b4dc9c5824",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "11311732397-piustuece9r1s69rr2633ani4armqpug.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0KIoTDZWgpCImjFMucUmAKvNf54gzEjc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "11311732397-piustuece9r1s69rr2633ani4armqpug.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
