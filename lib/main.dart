@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/responsive/mobile_screen_layout.dart';
 import 'package:flutter_application_1/responsive/responsive_layout_screen.dart';
 import 'package:flutter_application_1/responsive/web_screen_layout.dart';
+import 'package:flutter_application_1/screens/login_screen.dart';
 import 'package:flutter_application_1/utilis/colors.dart';
+import 'package:flutter_application_1/screens/signup_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,14 +29,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Photo Moments',
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: mobileBackgroundColor,
-      ),
-      home: ResponsiveLayout(
-          mobileScreenLayout: MobileScreenLayout(),
-          webScreenLayout: WebScreenLayout()),
-    );
+        debugShowCheckedModeBanner: false,
+        title: 'Photo Moments',
+        theme: ThemeData.dark().copyWith(
+          scaffoldBackgroundColor: mobileBackgroundColor,
+        ),
+        home: SignupScreen()
+        // ResponsiveLayout(
+        //     mobileScreenLayout: MobileScreenLayout(),
+        //     webScreenLayout: WebScreenLayout()),
+        );
   }
 }
