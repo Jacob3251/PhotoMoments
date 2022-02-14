@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/resources/auth_methods.dart';
 import 'package:flutter_application_1/utilis/colors.dart';
+import 'package:flutter_application_1/utilis/utils.dart';
 import 'package:flutter_application_1/widgets/text_input_form.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -20,6 +22,17 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+  }
+
+  void loginUser() async {
+    String res = await AuthMethods().loginUser(
+        email: _emailController.text, password: _passwordController.text);
+
+    if (res == 'success') {
+      //Nothing for now
+    } else {
+      showSnackBar(res, context);
+    }
   }
 
   @override
@@ -66,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             //submit button
             GestureDetector(
-              onTap: () {},
+              onTap: loginUser,
               child: Container(
                 alignment: Alignment.center,
                 width: double.infinity,
