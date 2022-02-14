@@ -65,6 +65,10 @@ class AuthMethods {
       } else {
         res = 'Please enter all the fields';
       }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        res = 'You are not a user Signup now';
+      }
     } catch (err) {
       res = err.toString();
     }

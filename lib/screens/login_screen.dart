@@ -15,6 +15,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -25,6 +26,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void loginUser() async {
+    setState(() {
+      _isLoading = true;
+    });
     String res = await AuthMethods().loginUser(
         email: _emailController.text, password: _passwordController.text);
 
@@ -33,6 +37,9 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       showSnackBar(res, context);
     }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -86,7 +93,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(4), color: blueColor),
-                child: Text('Log in'),
+                child: _isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: primaryColor,
+                        ),
+                      )
+                    : Text('Log in'),
               ),
             ),
             SizedBox(
