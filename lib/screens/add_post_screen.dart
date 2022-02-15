@@ -1,9 +1,13 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/models/user.dart';
+import 'package:flutter_application_1/providers/user_provider.dart';
+import 'package:flutter_application_1/resources/firestore_methods.dart';
 import 'package:flutter_application_1/utilis/colors.dart';
 import 'package:flutter_application_1/utilis/utils.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class AddPostScreen extends StatefulWidget {
   AddPostScreen({Key? key}) : super(key: key);
@@ -14,7 +18,35 @@ class AddPostScreen extends StatefulWidget {
 
 class _AddPostScreenState extends State<AddPostScreen> {
   Uint8List? _file;
-  _selectImage() async {
+  final TextEditingController _textEditingController = TextEditingController();
+  bool _isloading = false;
+  void postImage(String uid, String username, String profImage) async {
+    setState(() {
+      _isloading = true;
+    });
+    try {
+      String res = await FirestoreMethods().uploadPost(
+          _textEditingController.text, _file!, uid, username, profImage);
+      if (res == 'success') {
+        setState(() {
+          _isloading = false;
+        });
+        showSnackBar('Post Uploded', context);
+        clearImage();
+      } else {
+        setState(() {
+          _isloading = false;
+        });
+        showSnackBar(res, context);
+        clearImage();
+      }
+    } catch (e) {
+      showSnackBar(e.toString(), context);
+      clearImage();
+    }
+  }
+
+  _selectImage(BuildContext context) async {
     return showDialog(
         context: context,
         builder: (context) {
@@ -42,6 +74,13 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     _file = file;
                   });
                 },
+              ),
+              SimpleDialogOption(
+                padding: const EdgeInsets.all(20),
+                child: const Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
               )
             ],
           );
@@ -49,14 +88,55 @@ class _AddPostScreenState extends State<AddPostScreen> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _textEditingController.dispose();
+  }
+
+  void clearImage() {
+    setState(() {
+      _file = null;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final User user = Provider.of<UserProvider>(context).getUser;
+
     return _file == null
-        ? Container(
-            child: IconButton(
-              icon: Icon(Icons.upload),
-              onPressed: () {
-                _selectImage();
-              },
+        ? SafeArea(
+            child: Container(
+              child: Column(children: [
+                Flexible(
+                  child: Container(),
+                  flex: 2,
+                ),
+                Text(
+                  'Create a new post',
+                  style: TextStyle(fontSize: 28),
+                ),
+                SizedBox(
+                  height: 25,
+                ),
+                IconButton(
+                  icon: Icon(Icons.upload),
+                  onPressed: () {
+                    _selectImage(context);
+                  },
+                ),
+                SizedBox(
+                  height: 14,
+                ),
+                Text(
+                  'Select Images',
+                  style: TextStyle(fontSize: 22),
+                ),
+                Flexible(
+                  child: Container(),
+                  flex: 2,
+                ),
+              ]),
             ),
           )
         : Scaffold(
@@ -64,12 +144,13 @@ class _AddPostScreenState extends State<AddPostScreen> {
               backgroundColor: mobileBackgroundColor,
               leading: IconButton(
                 icon: Icon(Icons.arrow_back),
-                onPressed: () {},
+                onPressed: clearImage,
               ),
               title: Text('Post to'),
               actions: [
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () =>
+                      postImage(user.uid, user.username, user.photoUrl),
                   child: Text(
                     'Post',
                     style: TextStyle(
@@ -82,17 +163,25 @@ class _AddPostScreenState extends State<AddPostScreen> {
             ),
             body: Column(
               children: [
+                _isloading
+                    ? const LinearProgressIndicator()
+                    : Padding(
+                        padding: EdgeInsets.only(
+                          top: 0,
+                        ),
+                      ),
+                const Divider(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CircleAvatar(
-                      backgroundImage: NetworkImage(
-                          'https://images.unsplash.com/photo-1644851129293-5481c93eb59a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxMHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60'),
+                      backgroundImage: NetworkImage(user.photoUrl),
                     ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width * .4,
                       child: TextField(
+                        controller: _textEditingController,
                         decoration: const InputDecoration(
                           hintText: 'Write a caption',
                           border: InputBorder.none,
@@ -108,8 +197,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                         child: Container(
                             decoration: BoxDecoration(
                                 image: DecorationImage(
-                                    image: NetworkImage(
-                                        'https://images.unsplash.com/photo-1644851129293-5481c93eb59a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxMHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60'),
+                                    image: MemoryImage(_file!),
                                     fit: BoxFit.fill,
                                     alignment: FractionalOffset.topCenter))),
                       ),
