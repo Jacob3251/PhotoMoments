@@ -32,6 +32,16 @@ class _CommentScreenState extends State<CommentScreen> {
       appBar: AppBar(
         backgroundColor: mobileBackgroundColor,
         title: const Text('Comments'),
+        leading: IconButton(
+          padding: EdgeInsets.only(left: 12, top: 4),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            size: 14,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
